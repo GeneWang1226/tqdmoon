@@ -70,9 +70,9 @@ Preview:
 
 | Skin | Example |
 |---|---|
-| `tqd_classic` | `|████████░░░░░░░░░░░░|  50% 5/10` |
+| `tqd_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
 | `tqd_ascii` | `[=====>               ]  25%` |
-| `tqd_moon` | `|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑|  50%` |
+| `tqd_moon` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
 | `tqd_google` | `tqdooooooooooooom  60%` |
 
 ### Custom Skin
