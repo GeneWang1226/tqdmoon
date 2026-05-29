@@ -1,3 +1,4 @@
+///|
 fn main {
   println("=== moontqdm demo ===\n")
 
@@ -10,22 +11,31 @@ fn main {
 
   // 2. ASCII 皮肤
   println("\n--- tqd_ascii ---")
-  let t2 = @tqdmoon.tqdm([1, 2, 3, 4, 5].iter(), total=Some(5), style=@tqdmoon.tqd_ascii)
+  let t2 = @tqdmoon.tqdm(
+    [1, 2, 3, 4, 5].iter(),
+    total=Some(5),
+    style=@tqdmoon.tqd_ascii,
+  )
   for x in t2 {
     ignore(x)
   }
 
   // 3. 月相皮肤
   println("\n--- tqd_moon ---")
-  let t3 = @tqdmoon.tqdm([1, 2, 3, 4, 5].iter(), total=Some(5), style=@tqdmoon.tqd_moon)
+  let t3 = @tqdmoon.tqdm(
+    [1, 2, 3, 4, 5].iter(),
+    total=Some(5),
+    style=@tqdmoon.tqd_moon,
+  )
   for x in t3 {
     ignore(x)
   }
 
   // 4. Google 皮肤（链式调用）
   println("\n--- tqd_google (链式调用) ---")
-  let t4 = @tqdmoon.tqdm([1, 2, 3, 4, 5].iter(), total=Some(5))
-    .set_style(@tqdmoon.tqd_google)
+  let t4 = @tqdmoon.tqdm([1, 2, 3, 4, 5].iter(), total=Some(5)).set_style(
+    @tqdmoon.tqd_google,
+  )
   for x in t4 {
     ignore(x)
   }
@@ -39,7 +49,10 @@ fn main {
 
   // 6. 长任务演示
   println("\n--- 长任务演示 ---")
-  let long_task = @tqdmoon.tqdm([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].iter(), total=Some(10))
+  let long_task = @tqdmoon.tqdm(
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].iter(),
+    total=Some(10),
+  )
   for x in long_task {
     ignore(x)
   }

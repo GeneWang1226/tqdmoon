@@ -1,0 +1,48 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "GeneWang1226/tqdmoon"
+
+import {
+  "moonbitlang/core/bench",
+}
+
+// Values
+pub let tqd_ascii : BarStyle
+
+pub let tqd_classic : BarStyle
+
+pub let tqd_google : BarStyle
+
+pub let tqd_moon : BarStyle
+
+pub fn[T] tqdm(Iter[T], total? : Int?, style? : BarStyle) -> Tqdm[T]
+
+// Errors
+
+// Types and methods
+pub struct BarStyle {
+  left : String
+  right : String
+  fill : String
+  head : String
+  tail : String
+  empty : String
+  width : Int
+  is_prefix : Bool
+}
+
+pub struct Tqdm[T] {
+  iterable : Iter[T]
+  total : Int?
+  start_instant : @bench.Timestamp
+  bar_style : BarStyle
+  current : Int
+  last_render_time : Double
+  first_render : Bool
+}
+pub fn[T] Tqdm::iter(Self[T]) -> Iter[T]
+pub fn[T] Tqdm::set_style(Self[T], BarStyle) -> Self[T]
+
+// Type aliases
+
+// Traits
+
