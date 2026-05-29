@@ -1,0 +1,7 @@
+import {
+  "GeneWang1226/tqdmoon",
+}
+
+options(
+  "is-main": true,
+)
