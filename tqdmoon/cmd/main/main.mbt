@@ -1,7 +1,8 @@
 ///|
-/// Entry point for the CLI or runnable program in this template.
-/// Keep main focused; move logic into the library package.
-/// Run with `moon run cmd/main` from the project root.
 fn main {
-  println("Hello")
+  let items = [1, 2, 3, 4, 5].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(5))
+  for x in t {
+    ignore(x)
+  }
 }
