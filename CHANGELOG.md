@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `tqd_google` → `tqdmoon_google`
 - **`tqdmoon_google` bar** — progressive solid-to-hollow animation spelling `tqdm...oon`.
 - **Tests** — trimmed redundant cases (22 total); removed duplicate `test/` demo package.
+- **Contributing guide** — documented standard release workflow: GitHub push/merge first, then `moon publish` to Mooncake (`CONTRIBUTING.md`).
 
 ## [0.1.0] - 2025-05-29
 
