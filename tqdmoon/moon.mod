@@ -11,13 +11,13 @@
 
 name = "GeneWang1226/tqdmoon"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.mbt.md"
 
 repository = ""
 
-license = "Apache-2.0"
+license = "MIT License"
 
 keywords = [ ]
 

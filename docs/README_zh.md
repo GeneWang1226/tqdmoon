@@ -51,27 +51,27 @@ for x in @tqdmoon.tqdm([10, 20, 30].iter()) {
 四种预设皮肤：
 
 ```moonbit
-// tqd_classic — 默认，实心方块
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_classic)
+// tqdmoon_classic — 默认，实心方块
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_classic)
 
-// tqd_ascii — ASCII 字符
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_ascii)
+// tqdmoon_ascii — ASCII 字符
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_ascii)
 
-// tqd_moon — 月相图标
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_moon)
+// tqdmoon_style — 月相图标
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_style)
 
-// tqd_google — 趣味梗，链式调用
-@tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqd_google)
+// tqdmoon_google — 趣味梗，链式调用
+@tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqdmoon_google)
 ```
 
 皮肤效果：
 
 | 皮肤 | 示例 |
 |---|---|
-| `tqd_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
-| `tqd_ascii` | `[=====>               ]  25%` |
-| `tqd_moon` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
-| `tqd_google` | `tqdooooooooooooom  60%` |
+| `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
+| `tqdmoon_ascii` | `[=====>               ]  25%` |
+| `tqdmoon_style` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
+| `tqdmoon_google` | `tqdmooooooooooooooooooooon  100%` |
 
 ### 自定义皮肤
 
@@ -101,7 +101,7 @@ for x in @tqdmoon.tqdm(items, total=Some(10), style=my_style) {
 pub fn[T] tqdm(
   iterable : Iter[T],
   total~   : Option[Int] = None,
-  style~   : BarStyle     = tqd_classic,
+  style~   : BarStyle     = tqdmoon_classic,
 ) -> Tqdm[T]
 
 // 链式切换皮肤（返回新实例）
@@ -119,19 +119,20 @@ pub fn[T] Tqdm::set_style(self : Tqdm[T], style : BarStyle) -> Tqdm[T]
 | `tail` | `String` | 进度条尾部（前缀模式下为后缀） |
 | `empty` | `String` | 未填充字符 |
 | `width` | `Int` | 进度条总宽度 |
-| `is_prefix` | `Bool` | 是否为前缀模式（如 `tqd_google`） |
+| `is_prefix` | `Bool` | 是否为前缀模式（如 `tqdmoon_google`） |
 
 ## 测试
 
+在 `tqdmoon/` 包目录下执行：
+
 ```bash
-# 运行单元测试（25 个用例）
+cd tqdmoon
+
+# 运行单元测试（22 个用例）
 moon test
 
 # 运行示例程序（演示所有皮肤）
 moon run cmd/main
-
-# 运行 test 目录下的独立示例
-moon run test
 ```
 
 ## 目录结构
@@ -142,9 +143,6 @@ tqdmoon/
 ├── tqdmoon.mbt           # 核心库代码
 ├── tqdmoon_test.mbt      # 黑盒测试（公开 API）
 ├── tqdmoon_wbtest.mbt    # 白盒测试（内部函数）
-├── test/
-│   ├── moon.pkg
-│   └── main.mbt          # 独立演示程序
 └── cmd/main/
     ├── moon.pkg
     └── main.mbt          # 皮肤对比示例

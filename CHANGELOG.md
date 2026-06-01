@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-06-01
+
+### Changed
+
+- **Renamed built-in skins** for consistent `tqdmoon_` prefix:
+  - `tqd_classic` → `tqdmoon_classic`
+  - `tqd_ascii` → `tqdmoon_ascii`
+  - `tqd_moon` → `tqdmoon_style`
+  - `tqd_google` → `tqdmoon_google`
+- **`tqdmoon_google` bar** — progressive solid-to-hollow animation spelling `tqdm...oon`.
+- **Tests** — trimmed redundant cases (22 total); removed duplicate `test/` demo package.
+
 ## [0.1.0] - 2025-05-29
 
 ### Added
@@ -13,13 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Auto cleanup** — Prints a trailing newline when the iterator is exhausted so subsequent output never overwrites the bar.
 - **Fallback meter mode** — When `total` is `None`, degrades gracefully to a counter showing elapsed time and processing rate (e.g. `50 items [00:04, 12.5 items/s]`).
 - **BarStyle / skin system** — Fully customizable `BarStyle` struct plus four built-in presets:
-  - `tqd_classic` — solid block bar
-  - `tqd_ascii` — ASCII bracket bar
-  - `tqd_moon` — moon-phase emoji bar
-  - `tqd_google` — fun prefix-mode meme bar (`tqdooooooooooooom`)
+  - `tqdmoon_classic` — solid block bar
+  - `tqdmoon_ascii` — ASCII bracket bar
+  - `tqdmoon_style` — moon-phase emoji bar
+  - `tqdmoon_google` — fun prefix-mode meme bar (`tqdm...oon`)
 - **Chainable API** — `Tqdm::set_style(style)` returns a new instance for fluent skin switching.
-- **25 unit tests** — Black-box tests for public API (`tqdmoon_test.mbt`) and white-box tests for internal helpers (`tqdmoon_wbtest.mbt`).
-- **Demo programs** — `cmd/main/main.mbt` (skin comparison) and `test/main.mbt` (standalone demo).
+- **Unit tests** — Black-box tests for public API (`tqdmoon_test.mbt`) and white-box tests for internal helpers (`tqdmoon_wbtest.mbt`).
+- **Demo program** — `cmd/main/main.mbt` (skin comparison).
 - **Documentation** — English `README.md` and Chinese `docs/README_zh.md` with usage, API reference, and directory structure.
 
 ### Fixed
