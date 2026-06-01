@@ -18,7 +18,7 @@ Unlike traditional renderers that require verbose manual updates, `tqdmoon` wrap
 - **Automatic Wrapping:** Intercept `.next()` on wrapped iterators to increment counters and flash the terminal seamlessly.
 - **Auto Clean-up:** Automatically append a newline `\n` when the iterator is exhausted (`None`).
 - **Fallback Stream Mode:** If `total` is `None`, degrade gracefully into a dynamic transaction counter/meter showing elapsed time and rates (e.g., `50 items [00:04, 12.5 items/s]`).
-- **The Theme System:** Support pre-configured themes via `BarStyle`, specifically implementing the signature `tqd_google` theme (`tqdoooooooooooooom`).
+- **The Theme System:** Support pre-configured themes via `BarStyle`, specifically implementing the signature `tqdmoon_google` theme (`tqdm●...n` → `tqdm...oon`).
 
 ## 🚫 Guardrails
 - NEVER let the terminal flash by printing without proper ANSI escape sequences (`\r`, `\x1B[K`).

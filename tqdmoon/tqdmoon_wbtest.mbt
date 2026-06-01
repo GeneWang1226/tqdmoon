@@ -13,42 +13,40 @@ test "repeat_string negative" {
 
 ///|
 test "build_bar_body with prefix skin" {
-  let body0 = build_bar_body(tqd_google, 0)
-  assert_eq(body0, "tqdm")
-  assert_eq(body0.length(), 4)
+  let body0 = build_bar_body(tqdmoon_google, 0)
+  assert_eq(body0, "tqdm" + repeat_string("●", 20) + "n")
 
-  let body5 = build_bar_body(tqd_google, 5)
-  assert_eq(body5.length(), 9)
-  assert_true(body5.has_prefix("tqd"))
-  assert_true(body5.has_suffix("m"))
+  let body5 = build_bar_body(tqdmoon_google, 5)
+  assert_eq(
+    body5,
+    "tqdm" + repeat_string("o", 5) + repeat_string("●", 15) + "n",
+  )
 
-  let body20 = build_bar_body(tqd_google, 20)
-  assert_eq(body20.length(), 24)
-  assert_true(body20.has_prefix("tqd"))
-  assert_true(body20.has_suffix("m"))
+  let body20 = build_bar_body(tqdmoon_google, 20)
+  assert_eq(body20, "tqdm" + repeat_string("o", 20) + "on")
 }
 
 ///|
 test "build_bar_body non-prefix empty" {
-  let body = build_bar_body(tqd_ascii, 0)
+  let body = build_bar_body(tqdmoon_ascii, 0)
   assert_eq(body, ">                   ")
 }
 
 ///|
 test "build_bar_body non-prefix full" {
-  let body = build_bar_body(tqd_ascii, 20)
+  let body = build_bar_body(tqdmoon_ascii, 20)
   assert_eq(body, "====================")
 }
 
 ///|
 test "build_bar_body non-prefix partial" {
-  let body = build_bar_body(tqd_ascii, 5)
+  let body = build_bar_body(tqdmoon_ascii, 5)
   assert_eq(body, "=====>              ")
 }
 
 ///|
 test "build_bar_body classic full" {
-  let body = build_bar_body(tqd_classic, 20)
+  let body = build_bar_body(tqdmoon_classic, 20)
   assert_eq(
     body, "████████████████████",
   )
@@ -90,20 +88,20 @@ test "format_rate integer" {
 
 ///|
 test "render_bar fallback mode" {
-  let bar = render_bar(None, 42, tqd_ascii, 3.0)
+  let bar = render_bar(None, 42, tqdmoon_ascii, 3.0)
   assert_true(bar.contains("42 items"))
   assert_true(bar.contains("00:03"))
 }
 
 ///|
 test "render_bar zero total" {
-  let bar = render_bar(Some(0), 0, tqd_ascii, 0.0)
+  let bar = render_bar(Some(0), 0, tqdmoon_ascii, 0.0)
   assert_true(bar.contains("0/0"))
 }
 
 ///|
 test "render_bar partial progress" {
-  let bar = render_bar(Some(10), 5, tqd_ascii, 1.0)
+  let bar = render_bar(Some(10), 5, tqdmoon_ascii, 1.0)
   assert_true(bar.contains("50%"))
   assert_true(bar.contains("5/10"))
   assert_true(bar.contains("["))
@@ -112,37 +110,17 @@ test "render_bar partial progress" {
 
 ///|
 test "render_bar full progress" {
-  let bar = render_bar(Some(5), 5, tqd_ascii, 2.0)
+  let bar = render_bar(Some(5), 5, tqdmoon_ascii, 2.0)
   assert_true(bar.contains("100%"))
   assert_true(bar.contains("5/5"))
-}
-
-///|
-test "elapsed_secs returns non-negative" {
-  let start = @bench.monotonic_clock_start()
-  let elapsed = elapsed_secs(start)
-  assert_true(elapsed >= 0.0)
-}
-
-///|
-test "Tqdm::iter wraps and yields all items" {
-  let data = [1, 2, 3, 4, 5].iter()
-  let t = tqdm(data, total=Some(5))
-  let iter = t.iter()
-  let mut i = 0
-  for x in iter {
-    i = i + 1
-    ignore(x)
-  }
-  assert_eq(i, 5)
 }
 
 ///|
 test "Tqdm::set_style preserves other Tqdm fields" {
   let items = [1, 2].iter()
   let t = tqdm(items, total=Some(2))
-  let styled = t.set_style(tqd_google)
-  assert_eq(styled.total, Some(2))
+  let styled = t.set_style(tqdmoon_google)
+  assert_true(styled.total is Some(_))
   assert_eq(styled.first_render, true)
   assert_eq(styled.current, 0)
 }

@@ -8,10 +8,11 @@ pub struct BarStyle {
   empty : String
   width : Int
   is_prefix : Bool
+  is_gradient : Bool
 }
 
 ///|
-pub let tqd_classic : BarStyle = BarStyle::{
+pub let tqdmoon_classic : BarStyle = BarStyle::{
   left: "|",
   right: "|",
   fill: "█",
@@ -20,10 +21,11 @@ pub let tqd_classic : BarStyle = BarStyle::{
   empty: " ",
   width: 20,
   is_prefix: false,
+  is_gradient: false,
 }
 
 ///|
-pub let tqd_ascii : BarStyle = BarStyle::{
+pub let tqdmoon_ascii : BarStyle = BarStyle::{
   left: "[",
   right: "]",
   fill: "=",
@@ -32,10 +34,11 @@ pub let tqd_ascii : BarStyle = BarStyle::{
   empty: " ",
   width: 20,
   is_prefix: false,
+  is_gradient: false,
 }
 
 ///|
-pub let tqd_moon : BarStyle = BarStyle::{
+pub let tqdmoon_style : BarStyle = BarStyle::{
   left: "|",
   right: "|",
   fill: "🌕",
@@ -44,18 +47,20 @@ pub let tqd_moon : BarStyle = BarStyle::{
   empty: "🌑",
   width: 10,
   is_prefix: false,
+  is_gradient: false,
 }
 
 ///|
-pub let tqd_google : BarStyle = BarStyle::{
+pub let tqdmoon_google : BarStyle = BarStyle::{
   left: "",
   right: "",
-  fill: "o",
-  head: "tqd",
-  tail: "m",
-  empty: "",
+  fill: "●",
+  head: "tqdm",
+  tail: "on",
+  empty: "o",
   width: 20,
   is_prefix: true,
+  is_gradient: true,
 }
 
 ///|
@@ -73,7 +78,7 @@ pub struct Tqdm[T] {
 pub fn[T] tqdm(
   iterable : Iter[T],
   total? : Int? = None,
-  style? : BarStyle = tqd_classic,
+  style? : BarStyle = tqdmoon_classic,
 ) -> Tqdm[T] {
   Tqdm::{
     iterable,
@@ -101,9 +106,49 @@ fn repeat_string(s : String, n : Int) -> String {
 }
 
 ///|
+fn progress_fill_char(style : BarStyle, index : Int, filled : Int) -> String {
+  if index < filled {
+    style.empty
+  } else {
+    style.fill
+  }
+}
+
+///|
+fn build_progressive_fill(style : BarStyle, filled : Int) -> String {
+  build_progressive_fill_loop(style, filled, style.width, 0, "")
+}
+
+///|
+fn build_progressive_fill_loop(
+  style : BarStyle,
+  filled : Int,
+  width : Int,
+  index : Int,
+  acc : String,
+) -> String {
+  if index >= width {
+    acc
+  } else {
+    build_progressive_fill_loop(
+      style,
+      filled,
+      width,
+      index + 1,
+      acc + progress_fill_char(style, index, filled),
+    )
+  }
+}
+
+///|
 fn build_bar_body(style : BarStyle, progress : Int) -> String {
   if style.is_prefix {
-    style.head + repeat_string(style.fill, progress) + style.tail
+    if style.is_gradient {
+      let suffix = if progress >= style.width { style.tail } else { "n" }
+      style.head + build_progressive_fill(style, progress) + suffix
+    } else {
+      style.head + repeat_string(style.fill, progress) + style.tail
+    }
   } else {
     let n = progress
     let w = style.width

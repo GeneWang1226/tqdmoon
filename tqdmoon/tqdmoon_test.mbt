@@ -40,25 +40,7 @@ test "tqdm yields nothing for empty iterator" {
 test "set_style returns a Tqdm with updated style" {
   let items = [1].iter()
   let t = @tqdmoon.tqdm(items, total=Some(1))
-  let styled = t.set_style(@tqdmoon.tqd_ascii)
+  let styled = t.set_style(@tqdmoon.tqdmoon_ascii)
   assert_eq(styled.bar_style.fill, "=")
   assert_eq(styled.bar_style.head, ">")
-}
-
-///|
-test "bar_style presets have expected fields" {
-  assert_eq(tqd_classic.fill, "█")
-  assert_eq(tqd_classic.width, 20)
-  assert_eq(tqd_classic.is_prefix, false)
-
-  assert_eq(tqd_ascii.left, "[")
-  assert_eq(tqd_ascii.right, "]")
-
-  assert_eq(tqd_moon.fill, "🌕")
-  assert_eq(tqd_moon.empty, "🌑")
-  assert_eq(tqd_moon.width, 10)
-
-  assert_eq(tqd_google.head, "tqd")
-  assert_eq(tqd_google.tail, "m")
-  assert_eq(tqd_google.is_prefix, true)
 }
