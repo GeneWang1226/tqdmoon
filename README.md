@@ -1,4 +1,4 @@
-# moontqdm
+# tqdmoon
 
 > A pure-functional, zero-overhead, iterator-wrapping progress bar library for MoonBit, inspired by Python's `tqdm`.
 
@@ -53,27 +53,27 @@ Output: `3 items [00:00, 405405.4 items/s]`
 Four built-in presets:
 
 ```moonbit
-// tqd_classic — default, solid block
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_classic)
+// tqdmoon_classic — default, solid block
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_classic)
 
-// tqd_ascii — ASCII characters
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_ascii)
+// tqdmoon_ascii — ASCII characters
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_ascii)
 
-// tqd_moon — moon phase icons
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqd_moon)
+// tqdmoon_style — moon phase icons
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_style)
 
-// tqd_google — fun meme, chainable
-@tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqd_google)
+// tqdmoon_google — fun meme, chainable
+@tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqdmoon_google)
 ```
 
 Preview:
 
 | Skin | Example |
 |---|---|
-| `tqd_classic` | `|████████░░░░░░░░░░░░|  50% 5/10` |
-| `tqd_ascii` | `[=====>               ]  25%` |
-| `tqd_moon` | `|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑|  50%` |
-| `tqd_google` | `tqdooooooooooooom  60%` |
+| `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
+| `tqdmoon_ascii` | `[=====>               ]  25%` |
+| `tqdmoon_style` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
+| `tqdmoon_google` | `tqdmooooooooooooooooooooon  100%` |
 
 ### Custom Skin
 
@@ -103,7 +103,7 @@ for x in @tqdmoon.tqdm(items, total=Some(10), style=my_style) {
 pub fn[T] tqdm(
   iterable : Iter[T],
   total~   : Option[Int] = None,
-  style~   : BarStyle     = tqd_classic,
+  style~   : BarStyle     = tqdmoon_classic,
 ) -> Tqdm[T]
 
 // Chainable skin switcher (returns a new instance)
@@ -121,19 +121,20 @@ pub fn[T] Tqdm::set_style(self : Tqdm[T], style : BarStyle) -> Tqdm[T]
 | `tail` | `String` | Bar tail (or suffix in prefix mode) |
 | `empty` | `String` | Empty character |
 | `width` | `Int` | Total width of the bar |
-| `is_prefix` | `Bool` | Whether to use prefix mode (e.g. `tqd_google`) |
+| `is_prefix` | `Bool` | Whether to use prefix mode (e.g. `tqdmoon_google`) |
 
 ## Testing
 
+Run from the `tqdmoon/` package directory:
+
 ```bash
-# Run unit tests (25 cases)
+cd tqdmoon
+
+# Run unit tests (22 cases)
 moon test
 
 # Run the skin showcase demo
 moon run cmd/main
-
-# Run the standalone example
-moon run test
 ```
 
 ## Directory Structure
@@ -144,9 +145,6 @@ tqdmoon/
 ├── tqdmoon.mbt           # Core library code
 ├── tqdmoon_test.mbt      # Black-box tests (public API)
 ├── tqdmoon_wbtest.mbt    # White-box tests (internal functions)
-├── test/
-│   ├── moon.pkg
-│   └── main.mbt          # Standalone demo
 └── cmd/main/
     ├── moon.pkg
     └── main.mbt          # Skin comparison demo
