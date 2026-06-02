@@ -4,6 +4,9 @@
 
 **[中文文档](./docs/README_zh.md)**
 
+- **Mooncakes**: https://mooncakes.io/docs/GeneWang1226/tqdmoon
+- **GitHub**: https://github.com/GeneWang1226/tqdmoon
+
 ## Features
 
 - **Iterator Wrapping** — Just pass an `Iter[T]` in; counting, rendering, and terminal flushing are all automatic
@@ -14,6 +17,18 @@
 - **Zero External Dependencies** — Uses only MoonBit core primitives
 
 ## Import
+
+### Using `moon add` (Recommended)
+
+```bash
+# Add the latest version
+moon add GeneWang1226/tqdmoon
+
+# Or add a specific version
+moon add GeneWang1226/tqdmoon@0.1.1
+```
+
+### Manual Import
 
 Add to your `moon.pkg`:
 
