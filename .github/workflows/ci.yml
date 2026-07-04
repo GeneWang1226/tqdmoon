@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tqdmoon
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install MoonBit toolchain
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Verify MoonBit installation
+        run: moon version --all
+
+      - name: Update MoonBit dependencies
+        run: moon update
+
+      - name: Check formatting
+        run: |
+          moon fmt
+          git diff --exit-code
+
+      - name: Update interface lock
+        run: moon info
+
+      - name: Check interface lock is up to date
+        run: git diff --exit-code
+
+      - name: Run tests
+        run: moon test

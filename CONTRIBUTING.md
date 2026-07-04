@@ -67,6 +67,48 @@ Review `uncovered.log` to make sure no critical rendering paths are left unteste
 
 ---
 
+## 🔄 Continuous Integration
+
+We use GitHub Actions to validate every change before it reaches `main`.
+
+### Workflow files
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | `push` to `main`/`master`, every `pull_request` to `main`/`master` | Installs MoonBit, checks formatting with `moon fmt`, regenerates the `.mbti` lock with `moon info`, runs `moon test` |
+| [`.github/workflows/release.yml`](.github/workflows/release.yml) | `push` of a tag matching `v*.*.*` | Runs the same checks as CI, then creates a GitHub Release using the latest section from `CHANGELOG.md` |
+
+### CI expectations
+
+- **Formatting must be clean.** CI runs `moon fmt` and fails if any file changes.
+- **Interface lock must be up to date.** CI runs `moon info` and fails if `.mbti` files drift.
+- **All tests must pass.** `moon test` is the gate for both PRs and releases.
+
+If a workflow fails, fix the reported issue locally and push again:
+
+```bash
+cd tqdmoon
+moon fmt
+moon info
+moon test
+```
+
+---
+
+## 🤖 AI Agent Prompt for CI Changes
+
+When asking an AI agent (Cursor, Trae, Copilot, etc.) to modify or extend our GitHub Actions, use this prompt to keep behavior consistent with the project:
+
+> Add or update GitHub Actions workflows for the MoonBit project in `.github/workflows/`. The MoonBit module root is the `tqdmoon/` subdirectory, so all `run` steps must use `working-directory: tqdmoon`. Provide two workflows:
+>
+> 1. A `ci.yml` workflow that triggers on pushes to `main`/`master` and on pull requests to `main`/`master`. It must install the MoonBit CLI from `https://cli.moonbitlang.com/install/unix.sh`, run `moon update`, run `moon fmt` and fail if the working tree is dirty, run `moon info` and fail if `.mbti` files drift, then run `moon test`.
+>
+> 2. A `release.yml` workflow that triggers on tags matching `v*.*.*`. It must run the same validation steps as CI, then extract the topmost version section from `CHANGELOG.md` (located at the repository root) and create a GitHub Release with that body.
+>
+> Do not add automatic publishing to Mooncake in the release workflow; Mooncake publishing remains a manual step performed from `main` after merge. Use `actions/checkout@v4` and `softprops/action-gh-release@v2`. Keep workflow permissions minimal (`contents: write` only for the release job).
+
+---
+
 ## 📦 Release & Mooncake Publishing (Standard Workflow)
 
 **GitHub is the source of truth. Mooncake is the distribution channel.**
