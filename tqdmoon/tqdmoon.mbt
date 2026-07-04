@@ -72,6 +72,7 @@ pub struct Tqdm[T] {
   current : Int
   last_render_time : Double
   first_render : Bool
+  disabled : Bool
 }
 
 ///|
@@ -79,6 +80,7 @@ pub fn[T] tqdm(
   iterable : Iter[T],
   total? : Int? = None,
   style? : BarStyle = tqdmoon_classic,
+  disabled? : Bool = false,
 ) -> Tqdm[T] {
   Tqdm::{
     iterable,
@@ -88,12 +90,18 @@ pub fn[T] tqdm(
     current: 0,
     last_render_time: 0.0,
     first_render: true,
+    disabled,
   }
 }
 
 ///|
 pub fn[T] Tqdm::set_style(self : Tqdm[T], style : BarStyle) -> Tqdm[T] {
   Tqdm::{ ..self, bar_style: style }
+}
+
+///|
+pub fn[T] Tqdm::set_disabled(self : Tqdm[T], disabled : Bool) -> Tqdm[T] {
+  Tqdm::{ ..self, disabled, }
 }
 
 ///|
@@ -249,6 +257,7 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
   let total = self.total
   let start_instant = self.start_instant
   let bar_style = self.bar_style
+  let disabled = self.disabled
   let mut current = self.current
   let mut last_render_time = self.last_render_time
   let mut first_render = self.first_render
@@ -262,28 +271,32 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
       let item = iterable.next()
       match item {
         None => {
-          let elapsed = elapsed_secs(start_instant)
-          let bar = render_bar(total, current, bar_style, elapsed)
-          if first_render {
-            println(bar)
-          } else {
-            println("\u001b[1A" + bar)
+          if disabled == false {
+            let elapsed = elapsed_secs(start_instant)
+            let bar = render_bar(total, current, bar_style, elapsed)
+            if first_render {
+              println(bar)
+            } else {
+              println("\u001b[1A" + bar)
+            }
           }
           None
         }
         Some(x) => {
           current = current + 1
-          let elapsed = elapsed_secs(start_instant)
-          let threshold = if first_render { 0.0 } else { 0.05 }
-          if elapsed - last_render_time >= threshold {
-            let bar = render_bar(total, current, bar_style, elapsed)
-            if first_render {
-              println(bar)
-              first_render = false
-            } else {
-              println("\u001b[1A" + bar)
+          if disabled == false {
+            let elapsed = elapsed_secs(start_instant)
+            let threshold = if first_render { 0.0 } else { 0.05 }
+            if elapsed - last_render_time >= threshold {
+              let bar = render_bar(total, current, bar_style, elapsed)
+              if first_render {
+                println(bar)
+                first_render = false
+              } else {
+                println("\u001b[1A" + bar)
+              }
+              last_render_time = elapsed
             }
-            last_render_time = elapsed
           }
           Some(x)
         }

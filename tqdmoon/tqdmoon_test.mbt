@@ -44,3 +44,26 @@ test "set_style returns a Tqdm with updated style" {
   assert_eq(styled.bar_style.fill, "=")
   assert_eq(styled.bar_style.head, ">")
 }
+
+///|
+test "disabled tqdm still yields all items" {
+  let items = [10, 20, 30].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(3), disabled=true)
+  let mut count = 0
+  let mut sum = 0
+  for x in t {
+    count = count + 1
+    sum = sum + x
+  }
+  assert_eq(count, 3)
+  assert_eq(sum, 60)
+}
+
+///|
+test "set_disabled returns a Tqdm with updated disabled flag" {
+  let items = [1, 2].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(2))
+  let disabled_t = t.set_disabled(true)
+  assert_eq(disabled_t.disabled, true)
+  assert_eq(t.disabled, false)
+}

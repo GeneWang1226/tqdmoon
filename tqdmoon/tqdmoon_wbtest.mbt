@@ -124,3 +124,14 @@ test "Tqdm::set_style preserves other Tqdm fields" {
   assert_eq(styled.first_render, true)
   assert_eq(styled.current, 0)
 }
+
+///|
+test "Tqdm::set_disabled preserves other Tqdm fields" {
+  let items = [1, 2].iter()
+  let t = tqdm(items, total=Some(2))
+  let disabled_t = t.set_disabled(true)
+  assert_eq(disabled_t.disabled, true)
+  assert_true(disabled_t.total is Some(_))
+  assert_eq(disabled_t.first_render, true)
+  assert_eq(disabled_t.current, 0)
+}
