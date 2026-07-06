@@ -69,39 +69,69 @@ test "format_time two digit minutes" {
 
 ///|
 test "format_rate basic" {
-  let r = format_rate(10.5)
+  let r = format_rate(10.5, "items")
   assert_eq(r, "10.5 items/s")
 }
 
 ///|
 test "format_rate zero" {
-  let r = format_rate(0.0)
+  let r = format_rate(0.0, "items")
   assert_true(r.contains("items/s"))
   assert_true(r.has_prefix("0"))
 }
 
 ///|
 test "format_rate integer" {
-  let r = format_rate(14.0)
+  let r = format_rate(14.0, "items")
   assert_eq(r, "14 items/s")
 }
 
 ///|
+test "format_rate custom unit" {
+  let r = format_rate(8.0, "B")
+  assert_eq(r, "8 B/s")
+}
+
+///|
+test "apply_desc_prefix empty" {
+  assert_eq(apply_desc_prefix("", "50%"), "50%")
+}
+
+///|
+test "apply_desc_prefix with desc" {
+  assert_eq(apply_desc_prefix("Loading", "50%"), "Loading: 50%")
+}
+
+///|
 test "render_bar fallback mode" {
-  let bar = render_bar(None, 42, tqdmoon_ascii, 3.0)
+  let bar = render_bar(None, 42, tqdmoon_ascii, 3.0, "", "items")
   assert_true(bar.contains("42 items"))
   assert_true(bar.contains("00:03"))
 }
 
 ///|
+test "render_bar fallback mode custom unit" {
+  let bar = render_bar(None, 1024, tqdmoon_ascii, 2.0, "", "B")
+  assert_true(bar.contains("1024 B"))
+  assert_true(bar.contains("B/s"))
+}
+
+///|
+test "render_bar with desc" {
+  let bar = render_bar(Some(10), 5, tqdmoon_ascii, 1.0, "Loading", "items")
+  assert_true(bar.has_prefix("Loading: "))
+  assert_true(bar.contains("50%"))
+}
+
+///|
 test "render_bar zero total" {
-  let bar = render_bar(Some(0), 0, tqdmoon_ascii, 0.0)
+  let bar = render_bar(Some(0), 0, tqdmoon_ascii, 0.0, "", "items")
   assert_true(bar.contains("0/0"))
 }
 
 ///|
 test "render_bar partial progress" {
-  let bar = render_bar(Some(10), 5, tqdmoon_ascii, 1.0)
+  let bar = render_bar(Some(10), 5, tqdmoon_ascii, 1.0, "", "items")
   assert_true(bar.contains("50%"))
   assert_true(bar.contains("5/10"))
   assert_true(bar.contains("["))
@@ -110,7 +140,7 @@ test "render_bar partial progress" {
 
 ///|
 test "render_bar full progress" {
-  let bar = render_bar(Some(5), 5, tqdmoon_ascii, 2.0)
+  let bar = render_bar(Some(5), 5, tqdmoon_ascii, 2.0, "", "items")
   assert_true(bar.contains("100%"))
   assert_true(bar.contains("5/5"))
 }
