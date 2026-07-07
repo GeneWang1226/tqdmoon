@@ -33,6 +33,17 @@ fn main {
     ignore(x)
   }
 
+  println("\n--- desc + unit ---")
+  for
+    x in @tqdmoon.tqdm(
+      [1, 2, 3, 4, 5].iter(),
+      total=Some(5),
+      desc="Loading",
+      unit="it",
+    ) {
+    ignore(x)
+  }
+
   println("\n--- fallback mode ---")
   for x in @tqdmoon.tqdm([10, 20, 30].iter()) {
     ignore(x)

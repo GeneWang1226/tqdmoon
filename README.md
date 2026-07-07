@@ -13,6 +13,7 @@
 - **Zero Manual Intervention** — No need to manually call `update()` or `render()`
 - **Auto Cleanup** — Automatically prints a newline when the iterator is exhausted, so subsequent output won't overwrite the bar
 - **Fallback Mode** — When total is unknown, degrades gracefully to a meter mode showing elapsed time and processing rate
+- **Description & Unit** — Optional `desc` prefix and customizable `unit` (default `"items"`) for count and rate labels
 - **Multi-Skin System** — 4 built-in presets + fully customizable `BarStyle`
 - **Zero External Dependencies** — Uses only MoonBit core primitives
 
@@ -62,6 +63,24 @@ for x in @tqdmoon.tqdm([10, 20, 30].iter()) {
 ```
 
 Output: `3 items [00:00, 405405.4 items/s]`
+
+### Description & Unit
+
+```moonbit
+// Prefix description + custom unit
+for x in @tqdmoon.tqdm(items, total=Some(100), desc="Loading", unit="B") {
+  ignore(x)
+}
+```
+
+Output: `Loading: |██████████          | 50% 50/100 [00:01<00:01, 50 B/s]`
+
+```moonbit
+// Chainable setters
+@tqdmoon.tqdm(items, total=Some(10))
+  .set_desc("Processing")
+  .set_unit("it")
+```
 
 ## Skins
 
@@ -117,12 +136,18 @@ for x in @tqdmoon.tqdm(items, total=Some(10), style=my_style) {
 // Create a progress bar
 pub fn[T] tqdm(
   iterable : Iter[T],
-  total~   : Option[Int] = None,
-  style~   : BarStyle     = tqdmoon_classic,
+  total~    : Int?    = None,
+  style~    : BarStyle = tqdmoon_classic,
+  desc~     : String  = "",
+  unit~     : String  = "items",
+  disabled~ : Bool    = false,
 ) -> Tqdm[T]
 
-// Chainable skin switcher (returns a new instance)
+// Chainable setters (each returns a new instance)
 pub fn[T] Tqdm::set_style(self : Tqdm[T], style : BarStyle) -> Tqdm[T]
+pub fn[T] Tqdm::set_desc(self : Tqdm[T], desc : String) -> Tqdm[T]
+pub fn[T] Tqdm::set_unit(self : Tqdm[T], unit : String) -> Tqdm[T]
+pub fn[T] Tqdm::set_disabled(self : Tqdm[T], disabled : Bool) -> Tqdm[T]
 ```
 
 ### BarStyle
@@ -145,7 +170,7 @@ Run from the `tqdmoon/` package directory:
 ```bash
 cd tqdmoon
 
-# Run unit tests (22 cases)
+# Run unit tests (33 cases)
 moon test
 
 # Run the skin showcase demo

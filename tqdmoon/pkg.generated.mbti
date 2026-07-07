@@ -6,7 +6,7 @@ import {
 }
 
 // Values
-pub fn[T] tqdm(Iter[T], total? : Int?, style? : BarStyle, disabled? : Bool) -> Tqdm[T]
+pub fn[T] tqdm(Iter[T], total? : Int?, style? : BarStyle, desc? : String, unit? : String, disabled? : Bool) -> Tqdm[T]
 
 pub let tqdmoon_ascii : BarStyle
 
@@ -36,14 +36,18 @@ pub struct Tqdm[T] {
   total : Int?
   start_instant : @bench.Timestamp
   bar_style : BarStyle
+  desc : String
+  unit : String
   current : Int
   last_render_time : Double
   first_render : Bool
   disabled : Bool
 }
 pub fn[T] Tqdm::iter(Self[T]) -> Iter[T]
+pub fn[T] Tqdm::set_desc(Self[T], String) -> Self[T]
 pub fn[T] Tqdm::set_disabled(Self[T], Bool) -> Self[T]
 pub fn[T] Tqdm::set_style(Self[T], BarStyle) -> Self[T]
+pub fn[T] Tqdm::set_unit(Self[T], String) -> Self[T]
 
 // Type aliases
 

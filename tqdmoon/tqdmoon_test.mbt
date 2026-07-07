@@ -67,3 +67,29 @@ test "set_disabled returns a Tqdm with updated disabled flag" {
   assert_eq(disabled_t.disabled, true)
   assert_eq(t.disabled, false)
 }
+
+///|
+test "tqdm accepts desc and unit" {
+  let items = [1, 2].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(2), desc="Loading", unit="B")
+  assert_eq(t.desc, "Loading")
+  assert_eq(t.unit, "B")
+}
+
+///|
+test "set_desc returns a Tqdm with updated desc" {
+  let items = [1].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(1))
+  let updated = t.set_desc("Processing")
+  assert_eq(updated.desc, "Processing")
+  assert_eq(t.desc, "")
+}
+
+///|
+test "set_unit returns a Tqdm with updated unit" {
+  let items = [1].iter()
+  let t = @tqdmoon.tqdm(items, total=Some(1))
+  let updated = t.set_unit("it")
+  assert_eq(updated.unit, "it")
+  assert_eq(t.unit, "items")
+}
