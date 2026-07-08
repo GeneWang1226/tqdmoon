@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn make_bar_style(left? : String, right? : String, fill? : String, head? : String, tail? : String, empty? : String, width? : Int, is_prefix? : Bool, is_gradient? : Bool) -> BarStyle
+
 pub fn[T] tqdm(Iter[T], total? : Int?, style? : BarStyle, desc? : String, unit? : String, disabled? : Bool) -> Tqdm[T]
 
 pub let tqdmoon_ascii : BarStyle
@@ -40,7 +42,6 @@ pub struct Tqdm[T] {
   unit : String
   current : Int
   last_render_time : Double
-  first_render : Bool
   disabled : Bool
 }
 pub fn[T] Tqdm::iter(Self[T]) -> Iter[T]

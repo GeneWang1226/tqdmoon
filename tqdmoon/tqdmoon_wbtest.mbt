@@ -151,7 +151,6 @@ test "Tqdm::set_style preserves other Tqdm fields" {
   let t = tqdm(items, total=Some(2))
   let styled = t.set_style(tqdmoon_google)
   assert_true(styled.total is Some(_))
-  assert_eq(styled.first_render, true)
   assert_eq(styled.current, 0)
 }
 
@@ -162,6 +161,217 @@ test "Tqdm::set_disabled preserves other Tqdm fields" {
   let disabled_t = t.set_disabled(true)
   assert_eq(disabled_t.disabled, true)
   assert_true(disabled_t.total is Some(_))
-  assert_eq(disabled_t.first_render, true)
   assert_eq(disabled_t.current, 0)
+}
+
+///|
+test "format_time with hours" {
+  assert_eq(format_time(3600.0), "01:00:00")
+  assert_eq(format_time(3661.0), "01:01:01")
+  assert_eq(format_time(7200.0), "02:00:00")
+  assert_eq(format_time(86399.0), "23:59:59")
+}
+
+///|
+test "format_time large hours" {
+  assert_eq(format_time(100000.0), "27:46:40")
+}
+
+///|
+test "format_time boundary" {
+  assert_eq(format_time(59.9), "00:59")
+  assert_eq(format_time(60.0), "01:00")
+  assert_eq(format_time(3599.0), "59:59")
+}
+
+///|
+test "format_rate large value" {
+  let r = format_rate(12345.6, "items")
+  assert_eq(r, "12345.6 items/s")
+}
+
+///|
+test "format_rate very small" {
+  let r = format_rate(0.1, "items")
+  assert_eq(r, "0.1 items/s")
+}
+
+///|
+test "render_bar classic style" {
+  let bar = render_bar(Some(10), 5, tqdmoon_classic, 1.0, "", "items")
+  assert_true(bar.contains("50%"))
+  assert_true(bar.contains("|"))
+  assert_true(bar.contains("█"))
+}
+
+///|
+test "render_bar google style" {
+  let bar = render_bar(Some(10), 5, tqdmoon_google, 1.0, "", "items")
+  assert_true(bar.contains("tqdm"))
+  assert_true(bar.contains("50%"))
+}
+
+///|
+test "render_bar style skin" {
+  let bar = render_bar(Some(10), 5, tqdmoon_style, 1.0, "", "items")
+  assert_true(bar.contains("50%"))
+  assert_true(bar.contains("🌕"))
+  assert_true(bar.contains("🌑"))
+}
+
+///|
+test "render_bar fallback with desc" {
+  let bar = render_bar(None, 10, tqdmoon_ascii, 1.0, "Download", "B")
+  assert_true(bar.has_prefix("Download: "))
+  assert_true(bar.contains("10 B"))
+}
+
+///|
+test "render_bar at 0 percent" {
+  let bar = render_bar(Some(10), 0, tqdmoon_ascii, 0.0, "", "items")
+  assert_true(bar.contains("0%"))
+  assert_true(bar.contains("0/10"))
+}
+
+///|
+test "render_bar at 100 percent classic" {
+  let bar = render_bar(Some(10), 10, tqdmoon_classic, 5.0, "", "items")
+  assert_true(bar.contains("100%"))
+  assert_true(bar.contains("10/10"))
+}
+
+///|
+test "render_bar zero elapsed" {
+  let bar = render_bar(Some(10), 5, tqdmoon_ascii, 0.0, "", "items")
+  assert_true(bar.contains("50%"))
+  assert_true(bar.contains("00:00"))
+}
+
+///|
+test "progress_fill_char before filled" {
+  let style = tqdmoon_google
+  assert_eq(progress_fill_char(style, 0, 5), "o")
+  assert_eq(progress_fill_char(style, 3, 5), "o")
+}
+
+///|
+test "progress_fill_char after filled" {
+  let style = tqdmoon_google
+  assert_eq(progress_fill_char(style, 5, 5), "●")
+  assert_eq(progress_fill_char(style, 6, 5), "●")
+}
+
+///|
+test "progress_fill_char at boundary" {
+  let style = tqdmoon_google
+  assert_eq(progress_fill_char(style, 4, 5), "o")
+  assert_eq(progress_fill_char(style, 5, 5), "●")
+}
+
+///|
+test "build_progressive_fill empty" {
+  let result = build_progressive_fill(tqdmoon_google, 0)
+  assert_eq(result, repeat_string("●", 20))
+}
+
+///|
+test "build_progressive_fill full" {
+  let result = build_progressive_fill(tqdmoon_google, 20)
+  assert_eq(result, repeat_string("o", 20))
+}
+
+///|
+test "build_progressive_fill partial" {
+  let result = build_progressive_fill(tqdmoon_google, 5)
+  assert_eq(result, repeat_string("o", 5) + repeat_string("●", 15))
+}
+
+///|
+test "build_bar_body style skin partial" {
+  let body = build_bar_body(tqdmoon_style, 5)
+  assert_eq(body, repeat_string("🌕", 5) + repeat_string("🌑", 5))
+}
+
+///|
+test "build_bar_body style skin full" {
+  let body = build_bar_body(tqdmoon_style, 10)
+  assert_eq(body, repeat_string("🌕", 10))
+}
+
+///|
+test "build_bar_body classic partial" {
+  let body = build_bar_body(tqdmoon_classic, 10)
+  assert_eq(body, repeat_string("█", 10) + repeat_string(" ", 10))
+}
+
+///|
+test "build_bar_body non-prefix gradient" {
+  let style = BarStyle::{
+    left: "[",
+    right: "]",
+    fill: "=",
+    head: ">",
+    tail: "",
+    empty: " ",
+    width: 20,
+    is_prefix: false,
+    is_gradient: true,
+  }
+  let body = build_bar_body(style, 5)
+  assert_eq(body, "=====>              ")
+}
+
+///|
+test "repeat_string large n" {
+  let result = repeat_string("x", 100)
+  assert_eq(result.length(), 100)
+  assert_eq(result, repeat_string("x", 50) + repeat_string("x", 50))
+}
+
+///|
+test "build_bar_body google halfway" {
+  let body = build_bar_body(tqdmoon_google, 10)
+  assert_eq(
+    body,
+    "tqdm" + repeat_string("o", 10) + repeat_string("●", 10) + "n",
+  )
+}
+
+///|
+test "render_bar with custom narrow style" {
+  let custom = BarStyle::{
+    left: "<",
+    right: ">",
+    fill: "=",
+    head: ">",
+    tail: "",
+    empty: "-",
+    width: 10,
+    is_prefix: false,
+    is_gradient: false,
+  }
+  let bar = render_bar(Some(10), 5, custom, 1.0, "", "items")
+  assert_true(bar.contains("50%"))
+  assert_true(bar.has_prefix("<"))
+  assert_true(bar.contains(">"))
+}
+
+///|
+test "Tqdm::set_desc preserves other Tqdm fields" {
+  let items = [1, 2].iter()
+  let t = tqdm(items, total=Some(2))
+  let updated = t.set_desc("Test")
+  assert_eq(updated.desc, "Test")
+  assert_true(updated.total is Some(_))
+  assert_eq(updated.current, 0)
+}
+
+///|
+test "Tqdm::set_unit preserves other Tqdm fields" {
+  let items = [1, 2].iter()
+  let t = tqdm(items, total=Some(2))
+  let updated = t.set_unit("B")
+  assert_eq(updated.unit, "B")
+  assert_true(updated.total is Some(_))
+  assert_eq(updated.current, 0)
 }
