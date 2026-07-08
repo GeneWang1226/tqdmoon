@@ -18,6 +18,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify version matches tag
+        run: |
+          TAG_VERSION="${{ github.ref_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
+          MOD_VERSION=$(grep '^version' moon.mod | head -1 | sed 's/.*"\(.*\)"/\1/')
+          echo "Tag version:  $TAG_VERSION"
+          echo "Mod version:  $MOD_VERSION"
+          if [ "$TAG_VERSION" != "$MOD_VERSION" ]; then
+            echo "::error::moon.mod version ($MOD_VERSION) does not match git tag ($TAG_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $TAG_VERSION"
+
       - name: Install MoonBit toolchain
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash

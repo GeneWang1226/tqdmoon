@@ -9,12 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`make_bar_style` constructor** — public factory function for creating custom `BarStyle` values from black-box (external) packages.
+- **72 tests** — expanded from 27 to 72 test cases (23 black-box + 49 white-box), covering large iterations, all four skin presets, custom styles, fallback meter mode, zero-total edge case, `format_time` hours, `progress_fill_char`, `build_progressive_fill`, and `elapsed_secs`.
+
+### Changed
+
+- **CI pipeline** — aligned with competition pre-acceptance requirements: `moon check --deny-warn`, `moon fmt --check`, `moon info` + `git diff --exit-code`, `moon test --deny-warn --enable-coverage` with coverage reporting, multi-platform matrix (ubuntu, macos, windows), and native target testing.
+- **Release workflow** — added `moon.mod` version vs. git tag consistency check before publishing.
+
+### Fixed
+
+- **Flicker-free rendering** — replaced `\u001b[1A` with `\u001b[1A\u001b[K` (cursor up + clear line) to eliminate residual characters from previous bar frames.
+- **`format_time` hours support** — durations >= 1 hour now render as `HH:MM:SS` instead of overflowing the minute field.
+
+## [0.1.2] - 2026-06-07
+
+### Added
+
 - **`desc` option** — `tqdm(iterable, desc="Loading...")` prepends a description prefix to every bar line (e.g. `Loading...: |████| 50% 5/10 [...]`). Also exposed via `Tqdm::set_desc(string)` for fluent switching.
 - **`unit` option** — `tqdm(iterable, unit="B")` customizes the count and rate labels (default `"items"`; e.g. `"it"`, `"B"` → `1024 B [00:02, 512 B/s]`). Also exposed via `Tqdm::set_unit(string)`.
-- **GitHub Actions CI** — `.github/workflows/ci.yml` runs `moon fmt`, `moon info`, and `moon test` on every push to `main`/`master` and every pull request.
-- **GitHub Actions Release** — `.github/workflows/release.yml` runs the same validation checks on tags matching `v*.*.*` and creates a GitHub Release using the latest section from `CHANGELOG.md`.
-- **Contributing guide** — documented the CI setup and added a reusable AI-agent prompt for future workflow changes (`CONTRIBUTING.md`).
 - **`disabled` option** — `tqdm(iterable, disabled=true)` disables all progress-bar output while still yielding every item; useful for debugging and silent mode. Also exposed via `Tqdm::set_disabled(bool)` for fluent switching.
+- **GitHub Actions CI** — `.github/workflows/ci.yml` runs `moon fmt`, `moon info`, and `moon test` on every push and pull request.
+- **GitHub Actions Release** — `.github/workflows/release.yml` runs validation checks on tags matching `v*.*.*` and creates a GitHub Release using the latest section from `CHANGELOG.md`.
+- **Contributing guide** — documented the CI setup and added a reusable AI-agent prompt for future workflow changes (`CONTRIBUTING.md`).
 
 ## [0.1.1] - 2026-06-01
 
