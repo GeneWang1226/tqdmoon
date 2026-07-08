@@ -64,14 +64,41 @@ pub let tqdmoon_google : BarStyle = BarStyle::{
 }
 
 ///|
+pub fn make_bar_style(
+  left? : String = "|",
+  right? : String = "|",
+  fill? : String = "█",
+  head? : String = "",
+  tail? : String = "",
+  empty? : String = " ",
+  width? : Int = 20,
+  is_prefix? : Bool = false,
+  is_gradient? : Bool = false,
+) -> BarStyle {
+  BarStyle::{
+    left,
+    right,
+    fill,
+    head,
+    tail,
+    empty,
+    width,
+    is_prefix,
+    is_gradient,
+  }
+}
+
+///|
 pub struct Tqdm[T] {
   iterable : Iter[T]
   total : Int?
   start_instant : @bench.Timestamp
   bar_style : BarStyle
+  desc : String
+  unit : String
   current : Int
   last_render_time : Double
-  first_render : Bool
+  disabled : Bool
 }
 
 ///|
@@ -79,21 +106,41 @@ pub fn[T] tqdm(
   iterable : Iter[T],
   total? : Int? = None,
   style? : BarStyle = tqdmoon_classic,
+  desc? : String = "",
+  unit? : String = "items",
+  disabled? : Bool = false,
 ) -> Tqdm[T] {
   Tqdm::{
     iterable,
     total,
     start_instant: @bench.monotonic_clock_start(),
     bar_style: style,
+    desc,
+    unit,
     current: 0,
     last_render_time: 0.0,
-    first_render: true,
+    disabled,
   }
 }
 
 ///|
 pub fn[T] Tqdm::set_style(self : Tqdm[T], style : BarStyle) -> Tqdm[T] {
   Tqdm::{ ..self, bar_style: style }
+}
+
+///|
+pub fn[T] Tqdm::set_disabled(self : Tqdm[T], disabled : Bool) -> Tqdm[T] {
+  Tqdm::{ ..self, disabled, }
+}
+
+///|
+pub fn[T] Tqdm::set_desc(self : Tqdm[T], desc : String) -> Tqdm[T] {
+  Tqdm::{ ..self, desc, }
+}
+
+///|
+pub fn[T] Tqdm::set_unit(self : Tqdm[T], unit : String) -> Tqdm[T] {
+  Tqdm::{ ..self, unit, }
 }
 
 ///|
@@ -164,23 +211,43 @@ fn build_bar_body(style : BarStyle, progress : Int) -> String {
 ///|
 fn format_time(secs : Double) -> String {
   let total = secs.to_int()
-  let mins = total / 60
+  let hours = total / 3600
+  let mins = total % 3600 / 60
   let sec = total % 60
-  let mm = if mins < 10 { "0" + mins.to_string() } else { mins.to_string() }
-  let ss = if sec < 10 { "0" + sec.to_string() } else { sec.to_string() }
-  mm + ":" + ss
+  let pad = fn(x : Int) -> String {
+    if x < 10 {
+      "0" + x.to_string()
+    } else {
+      x.to_string()
+    }
+  }
+  if hours > 0 {
+    pad(hours) + ":" + pad(mins) + ":" + pad(sec)
+  } else {
+    pad(mins) + ":" + pad(sec)
+  }
 }
 
 ///|
-fn format_rate(rate : Double) -> String {
+fn format_rate(rate : Double, unit : String) -> String {
+  let suffix = " " + unit + "/s"
   let int_part = rate.to_int()
   if int_part.to_double() == rate {
-    int_part.to_string() + " items/s"
+    int_part.to_string() + suffix
   } else {
     let tenth = (rate * 10.0).to_int()
     let whole = tenth / 10
     let frac = tenth % 10
-    whole.to_string() + "." + frac.to_string() + " items/s"
+    whole.to_string() + "." + frac.to_string() + suffix
+  }
+}
+
+///|
+fn apply_desc_prefix(desc : String, bar : String) -> String {
+  if desc.is_empty() {
+    bar
+  } else {
+    desc + ": " + bar
   }
 }
 
@@ -190,20 +257,27 @@ fn render_bar(
   current : Int,
   style : BarStyle,
   elapsed : Double,
+  desc : String,
+  unit : String,
 ) -> String {
   match total {
     None => {
       let rate = if elapsed > 0.0 { current.to_double() / elapsed } else { 0.0 }
-      current.to_string() +
-      " items [" +
-      format_time(elapsed) +
-      ", " +
-      format_rate(rate) +
-      "]"
+      apply_desc_prefix(
+        desc,
+        current.to_string() +
+        " " +
+        unit +
+        " [" +
+        format_time(elapsed) +
+        ", " +
+        format_rate(rate, unit) +
+        "]",
+      )
     }
     Some(n) =>
       if n == 0 {
-        "0/0"
+        apply_desc_prefix(desc, "0/0")
       } else {
         let pct = current * 100 / n
         let filled = current * style.width / n
@@ -218,22 +292,25 @@ fn render_bar(
         } else {
           0.0
         }
-        style.left +
-        body +
-        style.right +
-        " " +
-        pct.to_string() +
-        "% " +
-        current.to_string() +
-        "/" +
-        n.to_string() +
-        " [" +
-        format_time(elapsed) +
-        "<" +
-        format_time(eta) +
-        ", " +
-        format_rate(rate) +
-        "]"
+        apply_desc_prefix(
+          desc,
+          style.left +
+          body +
+          style.right +
+          " " +
+          pct.to_string() +
+          "% " +
+          current.to_string() +
+          "/" +
+          n.to_string() +
+          " [" +
+          format_time(elapsed) +
+          "<" +
+          format_time(eta) +
+          ", " +
+          format_rate(rate, unit) +
+          "]",
+        )
       }
   }
 }
@@ -249,9 +326,12 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
   let total = self.total
   let start_instant = self.start_instant
   let bar_style = self.bar_style
+  let desc = self.desc
+  let unit = self.unit
+  let disabled = self.disabled
   let mut current = self.current
   let mut last_render_time = self.last_render_time
-  let mut first_render = self.first_render
+  let mut first_render = true
   let size_hint = match total {
     None => -1
     Some(n) => n
@@ -262,28 +342,33 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
       let item = iterable.next()
       match item {
         None => {
-          let elapsed = elapsed_secs(start_instant)
-          let bar = render_bar(total, current, bar_style, elapsed)
-          if first_render {
-            println(bar)
-          } else {
-            println("\u001b[1A" + bar)
+          if disabled == false {
+            let elapsed = elapsed_secs(start_instant)
+            let bar = render_bar(total, current, bar_style, elapsed, desc, unit)
+            if first_render {
+              println(bar)
+            } else {
+              println("\u001b[1A\u001b[K" + bar)
+            }
           }
           None
         }
         Some(x) => {
           current = current + 1
-          let elapsed = elapsed_secs(start_instant)
-          let threshold = if first_render { 0.0 } else { 0.05 }
-          if elapsed - last_render_time >= threshold {
-            let bar = render_bar(total, current, bar_style, elapsed)
-            if first_render {
-              println(bar)
-              first_render = false
-            } else {
-              println("\u001b[1A" + bar)
+          if disabled == false {
+            let elapsed = elapsed_secs(start_instant)
+            if elapsed - last_render_time >= 0.05 {
+              let bar = render_bar(
+                total, current, bar_style, elapsed, desc, unit,
+              )
+              if first_render {
+                println(bar)
+                first_render = false
+              } else {
+                println("\u001b[1A\u001b[K" + bar)
+              }
+              last_render_time = elapsed
             }
-            last_render_time = elapsed
           }
           Some(x)
         }

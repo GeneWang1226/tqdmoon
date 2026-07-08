@@ -1,42 +1,92 @@
-name: CI
+name: Test
 
 on:
   push:
-    branches: [main, master]
   pull_request:
-    branches: [main, master]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     defaults:
       run:
-        working-directory: tqdmoon
+        shell: bash
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install MoonBit toolchain
+      - name: Setup Moon env (Linux)
+        if: runner.os == 'Linux'
         run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libssl-dev
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
-      - name: Verify MoonBit installation
-        run: moon version --all
-
-      - name: Update MoonBit dependencies
-        run: moon update
-
-      - name: Check formatting
+      - name: Setup Moon env (macOS)
+        if: runner.os == 'macOS'
         run: |
-          moon fmt
+          brew install gcc openssl
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Setup Moon env (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          echo "$HOME/.moon/bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Setup MSYS2 + MinGW + openssl (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-openssl
+
+      # ==========================================
+      #  严格对齐大赛组委会预验收要求的四大核心过程
+      # ==========================================
+
+      # 过程 1: moon check
+      - name: Moon Check
+        run: |
+          cd tqdmoon
+          moon check --deny-warn
+
+      # 过程 2: moon fmt --check
+      - name: Moon Format Check
+        run: |
+          cd tqdmoon
+          moon fmt --check
+
+      # 过程 3: moon info (加一致性校验)
+      - name: Moon Interface Check
+        run: |
+          cd tqdmoon
+          moon info
           git diff --exit-code
+          git status
 
-      - name: Update interface lock
-        run: moon info
+      # 过程 4: moon test
+      - name: Moon Test (Default / Wasm)
+        run: |
+          cd tqdmoon
+          moon test --deny-warn --enable-coverage
+          moon coverage report -f summary
+          moon coverage analyze
 
-      - name: Check interface lock is up to date
-        run: git diff --exit-code
-
-      - name: Run tests
-        run: moon test
+      - name: Moon Test (Native Backend)
+        run: |
+          cd tqdmoon
+          moon test --deny-warn --target native --enable-coverage
+          moon coverage report -f summary
+          moon coverage analyze

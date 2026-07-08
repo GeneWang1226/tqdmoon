@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`desc` option** — `tqdm(iterable, desc="Loading...")` prepends a description prefix to every bar line (e.g. `Loading...: |████| 50% 5/10 [...]`). Also exposed via `Tqdm::set_desc(string)` for fluent switching.
+- **`unit` option** — `tqdm(iterable, unit="B")` customizes the count and rate labels (default `"items"`; e.g. `"it"`, `"B"` → `1024 B [00:02, 512 B/s]`). Also exposed via `Tqdm::set_unit(string)`.
 - **GitHub Actions CI** — `.github/workflows/ci.yml` runs `moon fmt`, `moon info`, and `moon test` on every push to `main`/`master` and every pull request.
 - **GitHub Actions Release** — `.github/workflows/release.yml` runs the same validation checks on tags matching `v*.*.*` and creates a GitHub Release using the latest section from `CHANGELOG.md`.
 - **Contributing guide** — documented the CI setup and added a reusable AI-agent prompt for future workflow changes (`CONTRIBUTING.md`).
+- **`disabled` option** — `tqdm(iterable, disabled=true)` disables all progress-bar output while still yielding every item; useful for debugging and silent mode. Also exposed via `Tqdm::set_disabled(bool)` for fluent switching.
 
 ## [0.1.1] - 2026-06-01
 
