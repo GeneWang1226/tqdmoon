@@ -64,6 +64,31 @@ pub let tqdmoon_google : BarStyle = BarStyle::{
 }
 
 ///|
+pub fn make_bar_style(
+  left? : String = "|",
+  right? : String = "|",
+  fill? : String = "█",
+  head? : String = "",
+  tail? : String = "",
+  empty? : String = " ",
+  width? : Int = 20,
+  is_prefix? : Bool = false,
+  is_gradient? : Bool = false,
+) -> BarStyle {
+  BarStyle::{
+    left,
+    right,
+    fill,
+    head,
+    tail,
+    empty,
+    width,
+    is_prefix,
+    is_gradient,
+  }
+}
+
+///|
 pub struct Tqdm[T] {
   iterable : Iter[T]
   total : Int?
@@ -73,7 +98,6 @@ pub struct Tqdm[T] {
   unit : String
   current : Int
   last_render_time : Double
-  first_render : Bool
   disabled : Bool
 }
 
@@ -95,7 +119,6 @@ pub fn[T] tqdm(
     unit,
     current: 0,
     last_render_time: 0.0,
-    first_render: true,
     disabled,
   }
 }
@@ -188,11 +211,21 @@ fn build_bar_body(style : BarStyle, progress : Int) -> String {
 ///|
 fn format_time(secs : Double) -> String {
   let total = secs.to_int()
-  let mins = total / 60
+  let hours = total / 3600
+  let mins = total % 3600 / 60
   let sec = total % 60
-  let mm = if mins < 10 { "0" + mins.to_string() } else { mins.to_string() }
-  let ss = if sec < 10 { "0" + sec.to_string() } else { sec.to_string() }
-  mm + ":" + ss
+  let pad = fn(x : Int) -> String {
+    if x < 10 {
+      "0" + x.to_string()
+    } else {
+      x.to_string()
+    }
+  }
+  if hours > 0 {
+    pad(hours) + ":" + pad(mins) + ":" + pad(sec)
+  } else {
+    pad(mins) + ":" + pad(sec)
+  }
 }
 
 ///|
@@ -298,7 +331,7 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
   let disabled = self.disabled
   let mut current = self.current
   let mut last_render_time = self.last_render_time
-  let mut first_render = self.first_render
+  let mut first_render = true
   let size_hint = match total {
     None => -1
     Some(n) => n
@@ -315,7 +348,7 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
             if first_render {
               println(bar)
             } else {
-              println("\u001b[1A" + bar)
+              println("\u001b[1A\u001b[K" + bar)
             }
           }
           None
@@ -324,8 +357,7 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
           current = current + 1
           if disabled == false {
             let elapsed = elapsed_secs(start_instant)
-            let threshold = if first_render { 0.0 } else { 0.05 }
-            if elapsed - last_render_time >= threshold {
+            if elapsed - last_render_time >= 0.05 {
               let bar = render_bar(
                 total, current, bar_style, elapsed, desc, unit,
               )
@@ -333,7 +365,7 @@ pub fn[T] Tqdm::iter(self : Tqdm[T]) -> Iter[T] {
                 println(bar)
                 first_render = false
               } else {
-                println("\u001b[1A" + bar)
+                println("\u001b[1A\u001b[K" + bar)
               }
               last_render_time = elapsed
             }
