@@ -32,7 +32,8 @@ fn build_command() -> @argparse.Command {
 ///|
 async fn main {
   let args = @env.args()
-  let matches = @argparse.parse(build_command(), argv=args)
+  let argv = if args.length() > 0 { args[1:] } else { args }
+  let matches = @argparse.parse(build_command(), argv~)
   let values = matches.values
   let style_name = match values.get("style") {
     Some([name, ..]) => name
