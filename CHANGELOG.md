@@ -9,16 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Standalone native CLI** — `cmd/main` builds a native executable that wraps `stdin` with `tqdmoon`, enabling pipe usage such as `seq 1 100000 | tqdmoon`.
+- **CLI flags** — native binary supports `--style` / `-s` (`classic`, `ascii`, `moon`, `google`), `--desc` / `-d`, and `--unit` / `-u`.
+- **WebAssembly target** — `cmd/wasm` produces `tqdmoon.wasm` for frontend/edge deployment; added `web/` demo page that runs the Wasm module in a browser with a minimal WASI shim.
+- **One-line installer** — `scripts/install.sh` auto-detects Linux/macOS and downloads the matching release archive; supports `VERSION` and `INSTALL_DIR` overrides.
+- **All-in-one release packaging** — GitHub Actions matrix builds native binaries plus Wasm bytecode and bundles both into `tqdmoon-<os>.tar.gz` (`dist/bin/tqdmoon`, `dist/lib/tqdmoon.wasm`, `README.md`).
+- **Dev-only release test workflow** — `.github/workflows/release-test.yml` builds and uploads artifacts on every push to `dev` without touching GitHub Releases.
+- **Partial-fill skin support** — `BarStyle` gained `part1`, `part2`, `part3` fields for quarter/half/three-quarter cell rendering, enabling smoother progress granularity.
 - **`make_bar_style` constructor** — public factory function for creating custom `BarStyle` values from black-box (external) packages.
 - **72 tests** — expanded from 27 to 72 test cases (23 black-box + 49 white-box), covering large iterations, all four skin presets, custom styles, fallback meter mode, zero-total edge case, `format_time` hours, `progress_fill_char`, `build_progressive_fill`, and `elapsed_secs`.
 
 ### Changed
 
+- **Renamed moon skin** — `tqdmoon_style` is now `tqdmoon_moon`; CLI flag changed from `--style style` to `--style moon`.
 - **CI pipeline** — aligned with competition pre-acceptance requirements: `moon check --deny-warn`, `moon fmt --check`, `moon info` + `git diff --exit-code`, `moon test --deny-warn --enable-coverage` with coverage reporting, multi-platform matrix (ubuntu, macos, windows), and native target testing.
-- **Release workflow** — added `moon.mod` version vs. git tag consistency check before publishing.
+- **Release workflow** — automated cross-platform builds and asset upload via `softprops/action-gh-release`.
 
 ### Fixed
 
+- **CLI argument parsing** — skip program name (`argv[0]`) so flags such as `--style moon` are parsed correctly.
 - **Flicker-free rendering** — replaced `\u001b[1A` with `\u001b[1A\u001b[K` (cursor up + clear line) to eliminate residual characters from previous bar frames.
 - **`format_time` hours support** — durations >= 1 hour now render as `HH:MM:SS` instead of overflowing the minute field.
 
