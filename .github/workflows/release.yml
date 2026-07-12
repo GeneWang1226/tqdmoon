@@ -25,14 +25,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSYS2 + MinGW (Windows)
+      - name: Setup MSVC (Windows)
         if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Setup MoonBit toolchain
         uses: hustcer/setup-moonbit@v1
@@ -48,13 +43,25 @@ jobs:
       - name: Build Wasm bytecode
         run: moon build --target wasm --release
 
+      - name: Inspect build outputs
+        run: |
+          echo "--- native build tree ---"
+          find _build/native/release/build -type f || true
+          echo "--- wasm build tree ---"
+          find _build/wasm/release/build -type f || true
+
       - name: Package all-in-one distribution
         run: |
           mkdir -p dist/bin dist/lib
+          NATIVE_BIN=$(find _build/native/release/build -type f \( -name 'main' -o -name 'main.exe' -o -name 'tqdmoon' -o -name 'tqdmoon.exe' \) | head -n 1)
+          if [ -z "$NATIVE_BIN" ]; then
+            echo "native binary not found"
+            exit 1
+          fi
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            cp _build/native/release/build/cmd/main/main.exe dist/bin/tqdmoon.exe
+            cp "$NATIVE_BIN" dist/bin/tqdmoon.exe
           else
-            cp _build/native/release/build/cmd/main/main dist/bin/tqdmoon
+            cp "$NATIVE_BIN" dist/bin/tqdmoon
           fi
           cp _build/wasm/release/build/cmd/wasm/wasm.wasm dist/lib/tqdmoon.wasm
           cp ../README.md dist/
