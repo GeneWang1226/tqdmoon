@@ -22,3 +22,7 @@ license = "MIT"
 keywords = [ ]
 
 description = ""
+
+import {
+  "moonbitlang/async@0.20.1",
+}
