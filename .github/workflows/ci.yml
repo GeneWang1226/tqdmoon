@@ -56,6 +56,11 @@ jobs:
       #  严格对齐大赛组委会预验收要求的四大核心过程
       # ==========================================
 
+      - name: Update MoonBit dependencies
+        run: |
+          cd tqdmoon
+          moon update
+
       # 过程 1: moon check
       - name: Moon Check
         run: |
