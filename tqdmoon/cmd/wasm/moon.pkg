@@ -1,0 +1,9 @@
+import {
+  "GeneWang1226/tqdmoon",
+}
+
+supported_targets = "wasm"
+
+options(
+  "is-main": true,
+)

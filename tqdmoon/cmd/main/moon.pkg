@@ -1,7 +1,14 @@
 import {
   "GeneWang1226/tqdmoon",
+  "moonbitlang/async",
+  "moonbitlang/async/stdio",
+  "moonbitlang/core/argparse",
+  "moonbitlang/core/env",
 }
+
+supported_targets = "native"
 
 options(
   "is-main": true,
+  link: true,
 )

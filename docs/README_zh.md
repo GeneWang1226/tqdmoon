@@ -57,8 +57,8 @@ for x in @tqdmoon.tqdm([10, 20, 30].iter()) {
 // tqdmoon_ascii — ASCII 字符
 @tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_ascii)
 
-// tqdmoon_style — 月相图标
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_style)
+// tqdmoon_moon — 月相图标
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_moon)
 
 // tqdmoon_google — 趣味梗，链式调用
 @tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqdmoon_google)
@@ -70,7 +70,7 @@ for x in @tqdmoon.tqdm([10, 20, 30].iter()) {
 |---|---|
 | `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
 | `tqdmoon_ascii` | `[=====>               ]  25%` |
-| `tqdmoon_style` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
+| `tqdmoon_moon` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
 | `tqdmoon_google` | `tqdmooooooooooooooooooooon  100%` |
 
 ### 自定义皮肤

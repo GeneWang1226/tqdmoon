@@ -2,10 +2,14 @@
 
 > A pure-functional, zero-overhead, iterator-wrapping progress bar library for MoonBit, inspired by Python's `tqdm`.
 
+[![GitHub release](https://img.shields.io/github/v/release/GeneWang1226/tqdmoon)](https://github.com/GeneWang1226/tqdmoon/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/GeneWang1226/tqdmoon/ci.yml?label=build)](https://github.com/GeneWang1226/tqdmoon/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/GeneWang1226/tqdmoon)](./LICENSE)
+
 **[中文文档](./docs/README_zh.md)**
 
-- **Mooncakes**: https://mooncakes.io/docs/GeneWang1226/tqdmoon
-- **GitHub**: https://github.com/GeneWang1226/tqdmoon
+- **Mooncakes**: <https://mooncakes.io/docs/GeneWang1226/tqdmoon>
+- **GitHub**: <https://github.com/GeneWang1226/tqdmoon>
 
 ## Features
 
@@ -45,14 +49,94 @@ import {
 
 ```moonbit
 fn main {
-  let items = [1, 2, 3, 4, 5].iter()
-  for x in @tqdmoon.tqdm(items, total=Some(5)) {
-    ignore(x)
-  }
+  let items = (0).until(9000000)
+  for _ in @tqdmoon.tqdm(items, total=Some(9000000)) {}
 }
 ```
 
-Output: `|████████████████████| 100% 5/5 [00:00<00:00, 30138.6 items/s]`
+Output: `|████████████████████| 100% 9000000/9000000 [00:00<00:00, 21801311.5 items/s]`
+
+### Prebuilt CLI
+
+Install the native binary system-wide and use it as a pipe monitor:
+
+#### One-line install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | sh
+```
+
+Then run it from anywhere:
+
+```bash
+seq 1 100000 | tqdmoon
+```
+
+<img src="./assets/tqdmoon_demo.gif" width="50%" align="left" alt="tqdmoon demo" />
+
+
+<br />
+
+Install to a custom prefix (e.g. `~/.local`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | INSTALL_DIR=$HOME/.local sh
+```
+
+Install a specific release version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | VERSION=v0.2.0 sh
+```
+
+> **Dev builds:** The installer downloads from GitHub Releases. If no release exists yet, download the artifact from the latest successful GitHub Actions run instead.
+
+#### CLI options
+
+```bash
+seq 1 100000 | tqdmoon --style moon
+seq 1 100000 | tqdmoon -s google -d Download -u bytes
+```
+
+Available flags:
+
+| Flag          | Description                                     | Default   |
+| ------------- | ----------------------------------------------- | --------- |
+| `-s, --style` | Bar style: `classic`, `ascii`, `moon`, `google` | `classic` |
+| `-d, --desc`  | Description prefix shown before the bar         | `Piping`  |
+| `-u, --unit`  | Unit label for counts and rates                 | `lines`   |
+
+#### Install from .deb (Ubuntu/Debian)
+
+```bash
+curl -fsSL -o tqdmoon.deb https://github.com/GeneWang1226/tqdmoon/releases/latest/download/tqdmoon_amd64.deb
+sudo dpkg -i tqdmoon.deb
+```
+
+The package installs the native binary to `/usr/local/bin/tqdmoon` and the WebAssembly bytecode to `/usr/local/lib/tqdmoon.wasm`.
+
+### WebAssembly Demo
+
+Run the compiled `tqdmoon.wasm` directly in a browser.
+
+First build the wasm target from the `tqdmoon/` module directory:
+
+```bash
+cd tqdmoon
+moon build --target wasm --release
+cp _build/wasm/release/build/cmd/wasm/wasm.wasm ../web/tqdmoon.wasm
+```
+
+Then serve the `web/` directory:
+
+```bash
+cd ../web
+python -m http.server 8000
+```
+
+Open <http://localhost:8000>. The page loads the WebAssembly module, provides a minimal WASI shim for stdout and timers, and renders the progress bar in real time.
+
+You can also deploy the `web/` directory to any static host (GitHub Pages, Vercel, etc.) after copying the `.wasm` file.
 
 ### Fallback Mode (without total)
 
@@ -93,8 +177,8 @@ Four built-in presets:
 // tqdmoon_ascii — ASCII characters
 @tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_ascii)
 
-// tqdmoon_style — moon phase icons
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_style)
+// tqdmoon_moon — moon phase icons
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_moon)
 
 // tqdmoon_google — fun meme, chainable
 @tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqdmoon_google)
@@ -102,12 +186,12 @@ Four built-in presets:
 
 Preview:
 
-| Skin | Example |
-|---|---|
+| Skin              | Example                              |
+| ----------------- | ------------------------------------ |
 | `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
-| `tqdmoon_ascii` | `[=====>               ]  25%` |
-| `tqdmoon_style` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
-| `tqdmoon_google` | `tqdmooooooooooooooooooooon  100%` |
+| `tqdmoon_ascii`   | `[=====>               ]  25%`       |
+| `tqdmoon_moon`    | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%`      |
+| `tqdmoon_google`  | `tqdmooooooooooooooooooooon  100%`   |
 
 ### Custom Skin
 
@@ -152,16 +236,16 @@ pub fn[T] Tqdm::set_disabled(self : Tqdm[T], disabled : Bool) -> Tqdm[T]
 
 ### BarStyle
 
-| Field | Type | Description |
-|---|---|---|
-| `left` | `String` | Left boundary of the bar |
-| `right` | `String` | Right boundary of the bar |
-| `fill` | `String` | Filled character |
-| `head` | `String` | Bar head (or prefix in prefix mode) |
-| `tail` | `String` | Bar tail (or suffix in prefix mode) |
-| `empty` | `String` | Empty character |
-| `width` | `Int` | Total width of the bar |
-| `is_prefix` | `Bool` | Whether to use prefix mode (e.g. `tqdmoon_google`) |
+| Field       | Type     | Description                                        |
+| ----------- | -------- | -------------------------------------------------- |
+| `left`      | `String` | Left boundary of the bar                           |
+| `right`     | `String` | Right boundary of the bar                          |
+| `fill`      | `String` | Filled character                                   |
+| `head`      | `String` | Bar head (or prefix in prefix mode)                |
+| `tail`      | `String` | Bar tail (or suffix in prefix mode)                |
+| `empty`     | `String` | Empty character                                    |
+| `width`     | `Int`    | Total width of the bar                             |
+| `is_prefix` | `Bool`   | Whether to use prefix mode (e.g. `tqdmoon_google`) |
 
 ## Testing
 
@@ -189,3 +273,4 @@ tqdmoon/
     ├── moon.pkg
     └── main.mbt          # Skin comparison demo
 ```
+

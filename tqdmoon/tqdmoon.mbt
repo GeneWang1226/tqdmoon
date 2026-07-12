@@ -6,6 +6,9 @@ pub struct BarStyle {
   head : String
   tail : String
   empty : String
+  part1 : String
+  part2 : String
+  part3 : String
   width : Int
   is_prefix : Bool
   is_gradient : Bool
@@ -19,6 +22,9 @@ pub let tqdmoon_classic : BarStyle = BarStyle::{
   head: "",
   tail: "",
   empty: " ",
+  part1: " ",
+  part2: " ",
+  part3: " ",
   width: 20,
   is_prefix: false,
   is_gradient: false,
@@ -32,19 +38,25 @@ pub let tqdmoon_ascii : BarStyle = BarStyle::{
   head: ">",
   tail: "",
   empty: " ",
+  part1: " ",
+  part2: " ",
+  part3: " ",
   width: 20,
   is_prefix: false,
   is_gradient: false,
 }
 
 ///|
-pub let tqdmoon_style : BarStyle = BarStyle::{
+pub let tqdmoon_moon : BarStyle = BarStyle::{
   left: "|",
   right: "|",
   fill: "🌕",
   head: "",
   tail: "",
   empty: "🌑",
+  part1: "🌒",
+  part2: "🌓",
+  part3: "🌔",
   width: 10,
   is_prefix: false,
   is_gradient: false,
@@ -58,6 +70,9 @@ pub let tqdmoon_google : BarStyle = BarStyle::{
   head: "tqdm",
   tail: "on",
   empty: "o",
+  part1: "o",
+  part2: "o",
+  part3: "o",
   width: 20,
   is_prefix: true,
   is_gradient: true,
@@ -71,6 +86,9 @@ pub fn make_bar_style(
   head? : String = "",
   tail? : String = "",
   empty? : String = " ",
+  part1? : String = " ",
+  part2? : String = " ",
+  part3? : String = " ",
   width? : Int = 20,
   is_prefix? : Bool = false,
   is_gradient? : Bool = false,
@@ -82,6 +100,9 @@ pub fn make_bar_style(
     head,
     tail,
     empty,
+    part1,
+    part2,
+    part3,
     width,
     is_prefix,
     is_gradient,
@@ -209,6 +230,36 @@ fn build_bar_body(style : BarStyle, progress : Int) -> String {
 }
 
 ///|
+fn partial_char(style : BarStyle, remainder : Int) -> String {
+  match remainder {
+    1 => style.part1
+    2 => style.part2
+    3 => style.part3
+    _ => style.empty
+  }
+}
+
+///|
+fn build_bar_body_scaled(style : BarStyle, scaled : Int, scale : Int) -> String {
+  if style.is_prefix {
+    build_bar_body(style, scaled / scale)
+  } else {
+    let w = style.width
+    if scaled >= w * scale {
+      repeat_string(style.fill, w)
+    } else {
+      let full = scaled / scale
+      let rem = scaled % scale
+      let partial = if rem > 0 { partial_char(style, rem) } else { style.head }
+      let used = full + partial.length()
+      repeat_string(style.fill, full) +
+      partial +
+      repeat_string(style.empty, w - used)
+    }
+  }
+}
+
+///|
 fn format_time(secs : Double) -> String {
   let total = secs.to_int()
   let hours = total / 3600
@@ -280,8 +331,9 @@ fn render_bar(
         apply_desc_prefix(desc, "0/0")
       } else {
         let pct = current * 100 / n
-        let filled = current * style.width / n
-        let body = build_bar_body(style, filled)
+        let scale = 4
+        let scaled = current * style.width * scale / n
+        let body = build_bar_body_scaled(style, scaled, scale)
         let rate = if elapsed > 0.0 {
           current.to_double() / elapsed
         } else {

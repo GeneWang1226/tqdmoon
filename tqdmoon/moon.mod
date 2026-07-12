@@ -11,7 +11,7 @@
 
 name = "GeneWang1226/tqdmoon"
 
-version = "0.1.2"
+version = "0.2.0-dev"
 
 readme = "README.mbt.md"
 
@@ -22,3 +22,7 @@ license = "MIT"
 keywords = [ ]
 
 description = ""
+
+import {
+  "moonbitlang/async@0.20.1",
+}
