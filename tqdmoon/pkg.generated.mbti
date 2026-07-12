@@ -16,7 +16,7 @@ pub let tqdmoon_classic : BarStyle
 
 pub let tqdmoon_google : BarStyle
 
-pub let tqdmoon_style : BarStyle
+pub let tqdmoon_moon : BarStyle
 
 // Errors
 

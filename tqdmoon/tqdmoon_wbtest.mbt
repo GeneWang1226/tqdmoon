@@ -213,7 +213,7 @@ test "render_bar google style" {
 
 ///|
 test "render_bar style skin" {
-  let bar = render_bar(Some(10), 5, tqdmoon_style, 1.0, "", "items")
+  let bar = render_bar(Some(10), 5, tqdmoon_moon, 1.0, "", "items")
   assert_true(bar.contains("50%"))
   assert_true(bar.contains("🌕"))
   assert_true(bar.contains("🌑"))
@@ -288,13 +288,13 @@ test "build_progressive_fill partial" {
 
 ///|
 test "build_bar_body style skin partial" {
-  let body = build_bar_body(tqdmoon_style, 5)
+  let body = build_bar_body(tqdmoon_moon, 5)
   assert_eq(body, repeat_string("🌕", 5) + repeat_string("🌑", 5))
 }
 
 ///|
-test "build_bar_body style skin full" {
-  let body = build_bar_body(tqdmoon_style, 10)
+test "build_bar_body style full" {
+  let body = build_bar_body(tqdmoon_moon, 10)
   assert_eq(body, repeat_string("🌕", 10))
 }
 

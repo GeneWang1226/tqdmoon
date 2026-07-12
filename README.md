@@ -89,7 +89,7 @@ curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/i
 #### CLI options
 
 ```bash
-seq 1 100000 | tqdmoon --style ascii
+seq 1 100000 | tqdmoon --style moon
 seq 1 100000 | tqdmoon -s google -d Download -u bytes
 ```
 
@@ -97,7 +97,7 @@ Available flags:
 
 | Flag | Description | Default |
 |---|---|---|
-| `-s, --style` | Bar style: `classic`, `ascii`, `style`, `google` | `classic` |
+| `-s, --style` | Bar style: `classic`, `ascii`, `moon`, `google` | `classic` |
 | `-d, --desc` | Description prefix shown before the bar | `Piping` |
 | `-u, --unit` | Unit label for counts and rates | `lines` |
 
@@ -172,8 +172,8 @@ Four built-in presets:
 // tqdmoon_ascii — ASCII characters
 @tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_ascii)
 
-// tqdmoon_style — moon phase icons
-@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_style)
+// tqdmoon_moon — moon phase icons
+@tqdmoon.tqdm(items, total=Some(5), style=@tqdmoon.tqdmoon_moon)
 
 // tqdmoon_google — fun meme, chainable
 @tqdmoon.tqdm(items, total=Some(5)).set_style(@tqdmoon.tqdmoon_google)
@@ -185,7 +185,7 @@ Preview:
 | ----------------- | ------------------------------------ |
 | `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
 | `tqdmoon_ascii`   | `[=====>               ]  25%`       |
-| `tqdmoon_style`   | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%`      |
+| `tqdmoon_moon`    | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%`      |
 | `tqdmoon_google`  | `tqdmooooooooooooooooooooon  100%`   |
 
 ### Custom Skin

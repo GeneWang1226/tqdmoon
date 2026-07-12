@@ -47,7 +47,7 @@ pub let tqdmoon_ascii : BarStyle = BarStyle::{
 }
 
 ///|
-pub let tqdmoon_style : BarStyle = BarStyle::{
+pub let tqdmoon_moon : BarStyle = BarStyle::{
   left: "|",
   right: "|",
   fill: "🌕",

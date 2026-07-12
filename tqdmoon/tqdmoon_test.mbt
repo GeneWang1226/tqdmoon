@@ -128,7 +128,7 @@ test "tqdm with custom BarStyle" {
 ///|
 test "tqdm with all four preset styles works" {
   let styles = [
-    @tqdmoon.tqdmoon_classic, @tqdmoon.tqdmoon_ascii, @tqdmoon.tqdmoon_style, @tqdmoon.tqdmoon_google,
+    @tqdmoon.tqdmoon_classic, @tqdmoon.tqdmoon_ascii, @tqdmoon.tqdmoon_moon, @tqdmoon.tqdmoon_google,
   ]
   for style in styles {
     let items = [1, 2].iter()
@@ -183,10 +183,10 @@ test "tqdm with total=1 yields single item" {
 }
 
 ///|
-test "tqdmoon_style preset has correct fields" {
-  assert_eq(@tqdmoon.tqdmoon_style.fill, "🌕")
-  assert_eq(@tqdmoon.tqdmoon_style.empty, "🌑")
-  assert_eq(@tqdmoon.tqdmoon_style.width, 10)
+test "tqdmoon_moon preset has correct fields" {
+  assert_eq(@tqdmoon.tqdmoon_moon.fill, "🌕")
+  assert_eq(@tqdmoon.tqdmoon_moon.empty, "🌑")
+  assert_eq(@tqdmoon.tqdmoon_moon.width, 10)
 }
 
 ///|

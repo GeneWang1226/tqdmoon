@@ -2,7 +2,7 @@
 fn parse_style(name : String) -> @tqdmoon.BarStyle {
   match name {
     "ascii" => @tqdmoon.tqdmoon_ascii
-    "style" => @tqdmoon.tqdmoon_style
+    "moon" => @tqdmoon.tqdmoon_moon
     "google" => @tqdmoon.tqdmoon_google
     _ => @tqdmoon.tqdmoon_classic
   }
@@ -14,7 +14,7 @@ fn build_command() -> @argparse.Command {
     @argparse.OptionArg(
       "style",
       short='s',
-      about="Bar style: classic, ascii, style, google",
+      about="Bar style: classic, ascii, moon, google",
     ),
     @argparse.OptionArg(
       "desc",
