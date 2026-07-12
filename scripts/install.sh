@@ -3,6 +3,7 @@ set -e
 
 REPO="GeneWang1226/tqdmoon"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local}"
+VERSION="${VERSION:-latest}"
 
 detect_os() {
   case "$(uname -s)" in
@@ -21,13 +22,17 @@ fi
 
 if [ "$OS" = "windows-latest" ]; then
   echo "Windows is not supported by this shell installer."
-  echo "Please download tqdmoon-windows-latest.tar.gz from the latest release manually."
+  echo "Please download tqdmoon-windows-latest.tar.gz from the release manually."
   exit 1
 fi
 
-URL="https://github.com/$REPO/releases/latest/download/tqdmoon-$OS.tar.gz"
+if [ "$VERSION" = "latest" ]; then
+  URL="https://github.com/$REPO/releases/latest/download/tqdmoon-$OS.tar.gz"
+else
+  URL="https://github.com/$REPO/releases/download/$VERSION/tqdmoon-$OS.tar.gz"
+fi
 
-echo "Downloading tqdmoon for $OS from $URL..."
+echo "Downloading tqdmoon for $OS (version: $VERSION) from $URL..."
 
 if [ -w "$INSTALL_DIR" ]; then
   curl -fsSL "$URL" | tar -xzC "$INSTALL_DIR" --strip-components=1

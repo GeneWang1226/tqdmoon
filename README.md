@@ -78,6 +78,14 @@ Install to a custom prefix (e.g. `~/.local`):
 curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | INSTALL_DIR=$HOME/.local sh
 ```
 
+Install a specific release version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | VERSION=v0.2.0 sh
+```
+
+> **Dev builds:** The installer downloads from GitHub Releases. If no release exists yet, download the artifact from the latest successful GitHub Actions run instead.
+
 #### Install from .deb (Ubuntu/Debian)
 
 ```bash
