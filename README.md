@@ -86,6 +86,21 @@ curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/i
 
 > **Dev builds:** The installer downloads from GitHub Releases. If no release exists yet, download the artifact from the latest successful GitHub Actions run instead.
 
+#### CLI options
+
+```bash
+seq 1 100000 | tqdmoon --style ascii
+seq 1 100000 | tqdmoon -s google -d Download -u bytes
+```
+
+Available flags:
+
+| Flag | Description | Default |
+|---|---|---|
+| `-s, --style` | Bar style: `classic`, `ascii`, `style`, `google` | `classic` |
+| `-d, --desc` | Description prefix shown before the bar | `Piping` |
+| `-u, --unit` | Unit label for counts and rates | `lines` |
+
 #### Install from .deb (Ubuntu/Debian)
 
 ```bash
