@@ -72,6 +72,11 @@ Then run it from anywhere:
 seq 1 100000 | tqdmoon
 ```
 
+<img src="./assets/tqdmoon_demo.gif" width="50%" align="left" alt="tqdmoon demo" />
+
+
+<br />
+
 Install to a custom prefix (e.g. `~/.local`):
 
 ```bash
@@ -95,11 +100,11 @@ seq 1 100000 | tqdmoon -s google -d Download -u bytes
 
 Available flags:
 
-| Flag | Description | Default |
-|---|---|---|
+| Flag          | Description                                     | Default   |
+| ------------- | ----------------------------------------------- | --------- |
 | `-s, --style` | Bar style: `classic`, `ascii`, `moon`, `google` | `classic` |
-| `-d, --desc` | Description prefix shown before the bar | `Piping` |
-| `-u, --unit` | Unit label for counts and rates | `lines` |
+| `-d, --desc`  | Description prefix shown before the bar         | `Piping`  |
+| `-u, --unit`  | Unit label for counts and rates                 | `lines`   |
 
 #### Install from .deb (Ubuntu/Debian)
 
