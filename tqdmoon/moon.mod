@@ -11,7 +11,7 @@
 
 name = "GeneWang1226/tqdmoon"
 
-version = "0.2.0-dev"
+version = "0.2.0"
 
 readme = "README.mbt.md"
 

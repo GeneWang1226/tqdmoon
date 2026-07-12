@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-13
+
 ### Added
 
 - **Standalone native CLI** — `cmd/main` builds a native executable that wraps `stdin` with `tqdmoon`, enabling pipe usage such as `seq 1 100000 | tqdmoon`.
