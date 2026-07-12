@@ -6,7 +6,7 @@ import {
 }
 
 // Values
-pub fn make_bar_style(left? : String, right? : String, fill? : String, head? : String, tail? : String, empty? : String, width? : Int, is_prefix? : Bool, is_gradient? : Bool) -> BarStyle
+pub fn make_bar_style(left? : String, right? : String, fill? : String, head? : String, tail? : String, empty? : String, part1? : String, part2? : String, part3? : String, width? : Int, is_prefix? : Bool, is_gradient? : Bool) -> BarStyle
 
 pub fn[T] tqdm(Iter[T], total? : Int?, style? : BarStyle, desc? : String, unit? : String, disabled? : Bool) -> Tqdm[T]
 
@@ -28,6 +28,9 @@ pub struct BarStyle {
   head : String
   tail : String
   empty : String
+  part1 : String
+  part2 : String
+  part3 : String
   width : Int
   is_prefix : Bool
   is_gradient : Bool
