@@ -2,10 +2,14 @@
 
 > A pure-functional, zero-overhead, iterator-wrapping progress bar library for MoonBit, inspired by Python's `tqdm`.
 
+[![GitHub release](https://img.shields.io/github/v/release/GeneWang1226/tqdmoon)](https://github.com/GeneWang1226/tqdmoon/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/GeneWang1226/tqdmoon/ci.yml?label=build)](https://github.com/GeneWang1226/tqdmoon/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/GeneWang1226/tqdmoon)](./LICENSE)
+
 **[中文文档](./docs/README_zh.md)**
 
-- **Mooncakes**: https://mooncakes.io/docs/GeneWang1226/tqdmoon
-- **GitHub**: https://github.com/GeneWang1226/tqdmoon
+- **Mooncakes**: <https://mooncakes.io/docs/GeneWang1226/tqdmoon>
+- **GitHub**: <https://github.com/GeneWang1226/tqdmoon>
 
 ## Features
 
@@ -45,14 +49,12 @@ import {
 
 ```moonbit
 fn main {
-  let items = [1, 2, 3, 4, 5].iter()
-  for x in @tqdmoon.tqdm(items, total=Some(5)) {
-    ignore(x)
-  }
+  let items = (0).until(9000000)
+  for _ in @tqdmoon.tqdm(items, total=Some(9000000)) {}
 }
 ```
 
-Output: `|████████████████████| 100% 5/5 [00:00<00:00, 30138.6 items/s]`
+Output: `|████████████████████| 100% 9000000/9000000 [00:00<00:00, 21801311.5 items/s]`
 
 ### Fallback Mode (without total)
 
@@ -102,12 +104,12 @@ Four built-in presets:
 
 Preview:
 
-| Skin | Example |
-|---|---|
+| Skin              | Example                              |
+| ----------------- | ------------------------------------ |
 | `tqdmoon_classic` | `\|████████░░░░░░░░░░░░\|  50% 5/10` |
-| `tqdmoon_ascii` | `[=====>               ]  25%` |
-| `tqdmoon_style` | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%` |
-| `tqdmoon_google` | `tqdmooooooooooooooooooooon  100%` |
+| `tqdmoon_ascii`   | `[=====>               ]  25%`       |
+| `tqdmoon_style`   | `\|🌕🌕🌕🌕🌕🌑🌑🌑🌑🌑\|  50%`      |
+| `tqdmoon_google`  | `tqdmooooooooooooooooooooon  100%`   |
 
 ### Custom Skin
 
@@ -152,16 +154,16 @@ pub fn[T] Tqdm::set_disabled(self : Tqdm[T], disabled : Bool) -> Tqdm[T]
 
 ### BarStyle
 
-| Field | Type | Description |
-|---|---|---|
-| `left` | `String` | Left boundary of the bar |
-| `right` | `String` | Right boundary of the bar |
-| `fill` | `String` | Filled character |
-| `head` | `String` | Bar head (or prefix in prefix mode) |
-| `tail` | `String` | Bar tail (or suffix in prefix mode) |
-| `empty` | `String` | Empty character |
-| `width` | `Int` | Total width of the bar |
-| `is_prefix` | `Bool` | Whether to use prefix mode (e.g. `tqdmoon_google`) |
+| Field       | Type     | Description                                        |
+| ----------- | -------- | -------------------------------------------------- |
+| `left`      | `String` | Left boundary of the bar                           |
+| `right`     | `String` | Right boundary of the bar                          |
+| `fill`      | `String` | Filled character                                   |
+| `head`      | `String` | Bar head (or prefix in prefix mode)                |
+| `tail`      | `String` | Bar tail (or suffix in prefix mode)                |
+| `empty`     | `String` | Empty character                                    |
+| `width`     | `Int`    | Total width of the bar                             |
+| `is_prefix` | `Bool`   | Whether to use prefix mode (e.g. `tqdmoon_google`) |
 
 ## Testing
 
@@ -189,3 +191,4 @@ tqdmoon/
     ├── moon.pkg
     └── main.mbt          # Skin comparison demo
 ```
+
