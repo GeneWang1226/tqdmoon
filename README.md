@@ -89,15 +89,24 @@ The package installs the native binary to `/usr/local/bin/tqdmoon` and the WebAs
 
 ### WebAssembly Demo
 
-Run the compiled `tqdmoon.wasm` directly in a browser:
+Run the compiled `tqdmoon.wasm` directly in a browser.
+
+First build the wasm target from the `tqdmoon/` module directory:
 
 ```bash
-cp tqdmoon/_build/wasm/release/build/cmd/wasm/wasm.wasm web/tqdmoon.wasm
-cd web
+cd tqdmoon
+moon build --target wasm --release
+cp _build/wasm/release/build/cmd/wasm/wasm.wasm ../web/tqdmoon.wasm
+```
+
+Then serve the `web/` directory:
+
+```bash
+cd ../web
 python -m http.server 8000
 ```
 
-Then open <http://localhost:8000>. The page loads the WebAssembly module, provides a minimal WASI shim for stdout and timers, and renders the progress bar in real time.
+Open <http://localhost:8000>. The page loads the WebAssembly module, provides a minimal WASI shim for stdout and timers, and renders the progress bar in real time.
 
 You can also deploy the `web/` directory to any static host (GitHub Pages, Vercel, etc.) after copying the `.wasm` file.
 
