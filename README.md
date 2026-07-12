@@ -56,6 +56,51 @@ fn main {
 
 Output: `|████████████████████| 100% 9000000/9000000 [00:00<00:00, 21801311.5 items/s]`
 
+### Prebuilt CLI
+
+Install the native binary system-wide and use it as a pipe monitor:
+
+#### One-line install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | sh
+```
+
+Then run it from anywhere:
+
+```bash
+seq 1 100000 | tqdmoon
+```
+
+Install to a custom prefix (e.g. `~/.local`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GeneWang1226/tqdmoon/main/scripts/install.sh | INSTALL_DIR=$HOME/.local sh
+```
+
+#### Install from .deb (Ubuntu/Debian)
+
+```bash
+curl -fsSL -o tqdmoon.deb https://github.com/GeneWang1226/tqdmoon/releases/latest/download/tqdmoon_amd64.deb
+sudo dpkg -i tqdmoon.deb
+```
+
+The package installs the native binary to `/usr/local/bin/tqdmoon` and the WebAssembly bytecode to `/usr/local/lib/tqdmoon.wasm`.
+
+### WebAssembly Demo
+
+Run the compiled `tqdmoon.wasm` directly in a browser:
+
+```bash
+cp tqdmoon/_build/wasm/release/build/cmd/wasm/wasm.wasm web/tqdmoon.wasm
+cd web
+python -m http.server 8000
+```
+
+Then open <http://localhost:8000>. The page loads the WebAssembly module, provides a minimal WASI shim for stdout and timers, and renders the progress bar in real time.
+
+You can also deploy the `web/` directory to any static host (GitHub Pages, Vercel, etc.) after copying the `.wasm` file.
+
 ### Fallback Mode (without total)
 
 ```moonbit
